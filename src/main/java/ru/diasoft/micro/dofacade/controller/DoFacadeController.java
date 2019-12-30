@@ -1,12 +1,21 @@
 package ru.diasoft.micro.dofacade.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diasoft.micro.dofacade.mock.*;
+import ru.diasoft.micro.dofacade.service.IDoFacadeService;
 
 
 @RestController
 public class DoFacadeController {
+
+    private final IDoFacadeService iDoFacadeService;
+
+    @Autowired
+    DoFacadeController(IDoFacadeService iDoFacadeService) {
+        this.iDoFacadeService = iDoFacadeService;
+    }
 
     @GetMapping(value = "/ping")
     public String ping() {
@@ -30,19 +39,19 @@ public class DoFacadeController {
         );
     }
 
-        @PostMapping("_upload")
+    @PostMapping("_upload")
     public PageflowRes<UploadAttachmentRes> uploadFile(@RequestPart(name = "file", required = false) MultipartFile file) {
-            PageflowItem<UploadAttachmentRes> item = new PageflowItem<>(
-                    new UploadAttachmentRes(),
-                    ""
-            );
-            return new PageflowRes<UploadAttachmentRes>(
-                    "1",
-                    "1",
-                    item,
-                    "1",
-                    "1"
-            );
+        PageflowItem<UploadAttachmentRes> item = new PageflowItem<>(
+                new UploadAttachmentRes(),
+                ""
+        );
+        return new PageflowRes<UploadAttachmentRes>(
+                "1",
+                "1",
+                item,
+                "1",
+                "1"
+        );
     }
 
 
