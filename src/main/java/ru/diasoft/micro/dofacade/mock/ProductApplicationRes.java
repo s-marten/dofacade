@@ -14,7 +14,7 @@ public class ProductApplicationRes {
     String cardNumber = "1111111111111111";
 
     @JsonProperty("DOCTYPENAME")
-    String typeName = "VIRTUALCARD";
+    String typeName = "virtualCardApp";
 
     @JsonProperty("STATE")
     String cardStatus = "inProgress";
