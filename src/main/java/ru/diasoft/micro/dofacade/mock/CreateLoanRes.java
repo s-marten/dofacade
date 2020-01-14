@@ -14,6 +14,6 @@ public class CreateLoanRes extends InputParams {
     Integer documentID = 234234;
 
     @JsonProperty("COMMENT")
-    String comment = "COMMENT";
+    String comment = "555\nCOMMENT";
 
 }
