@@ -11,18 +11,18 @@ import lombok.NoArgsConstructor;
 public class ProductApplicationRes {
 
     @JsonProperty("CardNumber")
-    String cardNumber = "654654654654";
+    String cardNumber = "1111 1111 1111 1111";
 
     @JsonProperty("DOCTYPENAME")
-    String typeName = "DOCTYPENAME";
+    String typeName = "Issue virtual card";
 
     @JsonProperty("STATE")
-    String cardStatus = "STATE";
+    String cardStatus = "Checks";
 
     @JsonProperty("DOCTYPESYSNAME")
-    String productType = "name";
+    String productType = "virtualCardApp";
 
     @JsonProperty("Name")
-    String cardHolder = "name";
+    String cardHolder = "Demo User";
 
 }
