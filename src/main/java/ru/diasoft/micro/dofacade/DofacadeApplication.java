@@ -6,8 +6,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DofacadeApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DofacadeApplication.class, args);
-	}
+    static {
+        try {
+            System.loadLibrary("FaceVerifierJni");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load.\n" + e);
+            System.exit(1);
+        }
+    }
 
+    public static void main(String[] args) {
+        SpringApplication.run(DofacadeApplication.class, args);
+    }
 }

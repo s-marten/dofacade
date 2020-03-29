@@ -1,58 +1,74 @@
 package ru.diasoft.micro.dofacade.controller;
 
+import java.io.IOException;
+import javax.validation.Valid;
+
 import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import ru.diasoft.micro.dofacade.exceptions.RecognitionException;
-import ru.diasoft.micro.dofacade.model.ErrorCases;
-import ru.diasoft.micro.dofacade.model.RecognitionErrorResponse;
-import ru.diasoft.micro.dofacade.model.RecognitionResult;
-import ru.diasoft.micro.dofacade.service.IPhotoService;
-
-import java.io.IOException;
+import ru.diasoft.micro.dofacade.dto.ComparePhotosReq;
+import ru.diasoft.micro.dofacade.dto.ComparePhotosRes;
+import ru.diasoft.micro.dofacade.dto.error.GenericErrorResponse;
+import ru.diasoft.micro.dofacade.dto.error.InputParamsValidationErrorReponse;
+import ru.diasoft.micro.dofacade.exception.RecognitionException;
+import ru.diasoft.micro.dofacade.model.Error;
+import ru.diasoft.micro.dofacade.service.PhotoServiceImpl;
 
 @RestController
-@RequestMapping("/photoRecognition")
-@RequiredArgsConstructor
+@RequestMapping("/photorecognition")
 public class PhotoController {
 
-    private final IPhotoService photoService;
+    private final PhotoServiceImpl photoService;
 
-    @ApiOperation(value = "Сравнение двух фоток", response = RecognitionResult.class)
-    @PostMapping("/comparePhotos")
-    public ResponseEntity<?> comparePhotos(MultipartFile photo1, MultipartFile photo2) {
+    public PhotoController(PhotoServiceImpl photoService) {
+        this.photoService = photoService;
+    }
 
-        byte[] photo1Bytes;
-        byte[] photo2Bytes;
+    @ApiOperation(value = "Сравнение двух фотографий")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "Операция завершилась успешно",
+                    response = ComparePhotosRes.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Некорректные входящие параметры",
+                    response = InputParamsValidationErrorReponse.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Внутренняя ошибка сервиса",
+                    response = GenericErrorResponse.class
+            )
+    })
+    @PostMapping("/comparephotos")
+    public ResponseEntity<ComparePhotosRes> comparePhotos(@Valid @ModelAttribute ComparePhotosReq req) {
+
+        byte[] firstPhotoBytes;
+        byte[] secondPhotoBytes;
 
         try {
-            photo1Bytes = photo1.getBytes();
+            firstPhotoBytes = req.getFirstPhotoFile().getBytes();
         } catch (IOException e) {
-            return ResponseEntity.status(400).body(new RecognitionErrorResponse(ErrorCases.COULDNT_DECODE, 1));
+            throw new RecognitionException(Error.COULDNT_DECODE, 1);
         }
 
         try {
-            photo2Bytes = photo2.getBytes();
+            secondPhotoBytes = req.getSecondPhotoFile().getBytes();
         } catch (IOException e) {
-            return ResponseEntity.status(400).body(new RecognitionErrorResponse(ErrorCases.COULDNT_DECODE, 2));
+            throw new RecognitionException(Error.COULDNT_DECODE, 2);
         }
 
-        RecognitionResult result;
-        try {
-            result = photoService.comparePhotos(photo1Bytes, photo2Bytes);
-        } catch (RecognitionException e) {
-            //TODO: Скорее всего нужно будет развести и отдавать 400ку или 200ку, если на фотке нет лиц, например
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new RecognitionErrorResponse(ErrorCases.UNEXPECTED_RECOGNITION_ERROR, e.getPhotoId())
-            );
-        }
+        boolean comparisonResult = photoService.comparePhotos(firstPhotoBytes, secondPhotoBytes, req.getThreshold().doubleValue());
+        ComparePhotosRes response = new ComparePhotosRes();
+        response.setResult(comparisonResult);
 
-        assert result != null;
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(response);
     }
 }
