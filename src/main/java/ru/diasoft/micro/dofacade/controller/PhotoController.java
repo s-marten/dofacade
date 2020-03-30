@@ -20,7 +20,7 @@ import ru.diasoft.micro.dofacade.model.Error;
 import ru.diasoft.micro.dofacade.service.PhotoServiceImpl;
 
 @RestController
-@RequestMapping("/photorecognition")
+@RequestMapping("api/v1/photo")
 public class PhotoController {
 
     private final PhotoServiceImpl photoService;
@@ -47,7 +47,7 @@ public class PhotoController {
                     response = GenericErrorResponse.class
             )
     })
-    @PostMapping("/comparephotos")
+    @PostMapping("/compare")
     public ResponseEntity<ComparePhotosRes> comparePhotos(@Valid @ModelAttribute ComparePhotosReq req) {
 
         byte[] firstPhotoBytes;
