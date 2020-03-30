@@ -1,0 +1,4 @@
+FROM openjdk:11-jdk-alpine
+VOLUME /tmp
+#копируем приложение в файл и переименовываем в файл app.jar
+COPY /target/dofacade-*.jar app.jar
