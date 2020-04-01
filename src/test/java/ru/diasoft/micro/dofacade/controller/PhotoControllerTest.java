@@ -1,118 +1,81 @@
 package ru.diasoft.micro.dofacade.controller;
 
-import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
-import ru.diasoft.micro.dofacade.dto.ComparePhotosReq;
-import ru.diasoft.micro.dofacade.dto.error.RecognitionErrorResponse;
-import ru.diasoft.micro.dofacade.exception.RecognitionException;
-import ru.diasoft.micro.dofacade.model.Error;
-import ru.diasoft.micro.dofacade.service.PhotoServiceImpl;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class PhotoControllerTest {
 
-    private static final String THRESHOLD = "0.95";
+    private static final String THRESHOLD = "0.75";
 
-    @Mock
-    private PhotoServiceImpl photoService;
+    @Autowired
+    private MockMvc mockMvc;
 
-    private PhotoController controller;
+    private static MockMultipartFile firstPhotoMock = new MockMultipartFile("firstPhotoFile", new byte[0]);
+    private static MockMultipartFile secondPhotoMock = new MockMultipartFile("secondPhotoFile", new byte[0]);
+    private static MockMultipartFile nullFile = new MockMultipartFile("file", (byte[]) null);
 
-    private MultipartFile photo1 = new MockMultipartFile("data", "photo1.jpg", "file", "photo1".getBytes());
-    private MultipartFile photo2 = new MockMultipartFile("data", "photo1.jpg", "file", "photo2".getBytes());
+    private ResultActions performComparePhotosRequest(MockMultipartFile firstPhoto, MockMultipartFile secondPhoto, String threshold) throws Exception {
+        return mockMvc.perform(multipart("/api/v1/photo/compare").file(firstPhoto).file(secondPhoto).param("threshold", threshold));
+    }
 
+    @ParameterizedTest
+    @MethodSource("provideWrongParametersForComparePhotos")
+    public void comparePhotos_noImageFiles(MockMultipartFile firstPhoto, MockMultipartFile secondPhoto, String threshold, int errorsCount) throws Exception {
+        performComparePhotosRequest(firstPhoto, secondPhoto, threshold)
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.inputParamErrors", Matchers.hasSize(errorsCount)));
+    }
 
-    @Before
-    public void setUp() {
-        controller = new PhotoController(photoService);
+    private static Stream<Arguments> provideWrongParametersForComparePhotos() {
+        return Stream.of(
+                Arguments.of(nullFile, nullFile, THRESHOLD, 2),
+                Arguments.of(firstPhotoMock, nullFile, THRESHOLD, 1),
+                Arguments.of(nullFile, secondPhotoMock, THRESHOLD, 1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideWrongThresholdForComparePhotos")
+    void comparePhotos_wrongThreshold(MockMultipartFile firstPhoto, MockMultipartFile secondPhoto, String threshold) throws Exception {
+        performComparePhotosRequest(firstPhoto, secondPhoto, threshold)
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.inputParamErrors", Matchers.hasSize(1)));
+    }
+
+    private static Stream<Arguments> provideWrongThresholdForComparePhotos() {
+        return Stream.of(
+                Arguments.of(firstPhotoMock, secondPhotoMock, null),
+                Arguments.of(firstPhotoMock, secondPhotoMock, "-3"),
+                Arguments.of(firstPhotoMock, secondPhotoMock, "-0.7"),
+                Arguments.of(firstPhotoMock, secondPhotoMock, "4"),
+                Arguments.of(firstPhotoMock, secondPhotoMock, "1.1")
+        );
     }
 
     @Test
-    public void comparePhotos() throws IOException, RecognitionException {
-
-        when(photoService.comparePhotos(photo1.getBytes(), photo2.getBytes(), 0.7)).thenReturn(true);
-
-        ComparePhotosReq req = new ComparePhotosReq();
-        req.setFirstPhotoFile(photo1);
-        req.setSecondPhotoFile(photo2);
-        req.setThreshold(new BigDecimal(THRESHOLD));
-        ResponseEntity<?> answer = controller.comparePhotos(req);
-
-        assertEquals(HttpStatus.OK, answer.getStatusCode());
-        /*RecognitionResult body = (RecognitionResult) answer.getBody();
-        assertTrue(body.getResult());*/
+    void comparePhotos_shouldReturnSuccess() throws Exception {
+        performComparePhotosRequest(firstPhotoMock, secondPhotoMock, THRESHOLD)
+                .andDo(print())
+                .andExpect(status().isOk());
     }
-
-    @Test
-    public void comparePhotosWithDecodingErrorInPhoto1() throws IOException {
-
-        //TODO: А может ли заставить MockMultipart кинуть IOExcpetion?
-        MultipartFile photoWithoutContent = Mockito.mock(MultipartFile.class);
-
-        when(photoWithoutContent.getBytes()).thenThrow(new IOException());
-
-        ComparePhotosReq req = new ComparePhotosReq();
-        req.setFirstPhotoFile(photoWithoutContent);
-        req.setSecondPhotoFile(photo2);
-        req.setThreshold(new BigDecimal(THRESHOLD));
-        ResponseEntity<?> answer = controller.comparePhotos(req);
-
-        assertEquals(400, answer.getStatusCodeValue());
-        RecognitionErrorResponse body = (RecognitionErrorResponse) answer.getBody();
-        RecognitionErrorResponse expectedBody = new RecognitionErrorResponse(Error.COULDNT_DECODE, 1);
-        assertEquals(expectedBody, body);
-    }
-
-    @Test
-    public void comparePhotosWithDecodingErrorInPhoto2() throws IOException {
-
-        //TODO: А может ли заставить MockMultipart кинуть IOExcpetion?
-        MultipartFile photoWithoutContent = Mockito.mock(MultipartFile.class);
-
-        when(photoWithoutContent.getBytes()).thenThrow(new IOException());
-
-        ComparePhotosReq req = new ComparePhotosReq();
-        req.setFirstPhotoFile(photo1);
-        req.setSecondPhotoFile(photoWithoutContent);
-        req.setThreshold(new BigDecimal(THRESHOLD));
-        ResponseEntity<?> answer = controller.comparePhotos(req);
-
-        assertEquals(400, answer.getStatusCodeValue());
-        RecognitionErrorResponse body = (RecognitionErrorResponse) answer.getBody();
-        RecognitionErrorResponse expectedBody = new RecognitionErrorResponse(Error.COULDNT_DECODE, 2);
-        assertEquals(expectedBody, body);
-    }
-
-    /*@Test
-    public void comparePhotosWithRecognitionError() throws IOException, RecognitionException {
-
-        RecognitionException exception = RecognitionException.builder()
-                .photoId(1)
-                .message("Sdk error")
-                .build();
-
-        when(photoService.comparePhotos(photo1.getBytes(), photo2.getBytes())).thenThrow(exception);
-
-        ResponseEntity<?> answer = controller.comparePhotos(photo1, photo2);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, answer.getStatusCode());
-
-        RecognitionError expectedErrorBody = new RecognitionError(Error.UNEXPECTED_RECOGNITION_ERROR, 1);
-
-        assertEquals(expectedErrorBody, answer.getBody());
-    }*/
 }

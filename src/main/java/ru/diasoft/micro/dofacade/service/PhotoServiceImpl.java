@@ -18,7 +18,7 @@ import ru.diasoft.micro.dofacade.model.Error;
 
 @Service
 @ConditionalOnProperty(
-        value="photoService",
+        name="photoService",
         havingValue = "ntechlab"
 )
 @AllArgsConstructor

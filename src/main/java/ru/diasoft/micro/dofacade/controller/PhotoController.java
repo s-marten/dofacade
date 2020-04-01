@@ -17,15 +17,15 @@ import ru.diasoft.micro.dofacade.dto.error.GenericErrorResponse;
 import ru.diasoft.micro.dofacade.dto.error.InputParamsValidationErrorReponse;
 import ru.diasoft.micro.dofacade.exception.RecognitionException;
 import ru.diasoft.micro.dofacade.model.Error;
-import ru.diasoft.micro.dofacade.service.PhotoServiceImpl;
+import ru.diasoft.micro.dofacade.service.PhotoService;
 
 @RestController
 @RequestMapping("api/v1/photo")
 public class PhotoController {
 
-    private final PhotoServiceImpl photoService;
+    private final PhotoService photoService;
 
-    public PhotoController(PhotoServiceImpl photoService) {
+    public PhotoController(PhotoService photoService) {
         this.photoService = photoService;
     }
 
