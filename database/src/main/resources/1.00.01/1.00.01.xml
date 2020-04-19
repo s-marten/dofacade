@@ -6,52 +6,59 @@
     <property name="autoIncrement" value="false" dbms="postgresql,mssql,oracle"/>
     <property name="autoIncrement" value="true" dbms="h2"/>
 
-	<changeSet id="1.0.1-createUserTable" author="developer" context="update" runInTransaction="false" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1.0.1-createPhotoTable" author="abitner" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="photo"/>
+            </not>
+        </preConditions>
+
+        <createSequence sequenceName="photo_id_seq" incrementBy="1" startValue="1"/>
+
+        <createTable tableName="photo">
+            <column name="id" type="NUMERIC(19,0)" autoIncrement="${autoIncrement}" defaultValueSequenceNext="photo_id_seq">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="img" type="BLOB">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <comment>Creating Photo table</comment>
+    </changeSet>
+
+	<changeSet id="1.0.2-createDescriptorTable" author="abitner" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="t_template"/>
+				<tableExists tableName="descriptor"/>
 			</not>
 		</preConditions>
 		
-		<createSequence sequenceName="t_template_templateid_seq" incrementBy="1" startValue="1"/>
+		<createSequence sequenceName="descriptor_id_seq" incrementBy="1" startValue="1"/>
 
-		<createTable tableName="t_template">
-			<column name="templateid" type="NUMERIC(19,0)" autoIncrement="${autoIncrement}" defaultValueSequenceNext="t_template_templateid_seq">
+		<createTable tableName="descriptor">
+			<column name="id" type="NUMERIC(19,0)" autoIncrement="${autoIncrement}" defaultValueSequenceNext="descriptor_id_seq">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="testkey" type="VARCHAR(255)">
+			<column name="photo_id" type="NUMERIC(19,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="testint" type="INTEGER">
+			<column name="age" type="INTEGER">
 				<constraints nullable="false" />
 			</column>
+            <column name="male" type="NUMERIC(2,1)">
+                <constraints nullable="false" />
+            </column>
+            <column name="female" type="NUMERIC(2,1)">
+                <constraints nullable="false" />
+            </column>
 		</createTable>
-		
-		<createIndex tableName="t_template" indexName="k01_template" unique="true">
-			<column name="testkey"/>
-		</createIndex>
-		
-		<comment>Creation of Test table</comment>
-	</changeSet>
-	
-	<changeSet id="1.0.1.01.modifyTemplateTable" author="developer" context="update" runInTransaction="false" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<columnExists tableName="t_template" columnName="testbalance"/>
-			</not>
-		</preConditions>
-		
-		<addColumn tableName="t_template">
-			<column name="testbalance" type="NUMERIC(28,10)">
-				<constraints nullable="true" />
-			</column>
-		</addColumn>
 
-		<addColumn tableName="t_template">
-			<column name="testdate" type="DATE">
-				<constraints nullable="true" />
-			</column>
-		</addColumn>
+        <addForeignKeyConstraint baseTableName="descriptor" baseColumnNames="photo_id"
+                                 referencedTableName="photo" referencedColumnNames="id"
+                                 constraintName="fk_descriptor_photo"/>
+
+		<comment>Creating Descriptor table</comment>
 	</changeSet>
-	
+
 </databaseChangeLog>

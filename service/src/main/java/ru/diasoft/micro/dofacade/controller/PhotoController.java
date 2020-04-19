@@ -8,12 +8,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.diasoft.micro.dofacade.dto.ComparePhotosReq;
-import ru.diasoft.micro.dofacade.dto.ComparePhotosRes;
+import ru.diasoft.micro.dofacade.dto.PhotoCompareReq;
+import ru.diasoft.micro.dofacade.dto.PhotoCompareRes;
+import ru.diasoft.micro.dofacade.dto.PhotoDescriptorsReq;
+import ru.diasoft.micro.dofacade.dto.PhotoDescriptorsRes;
 import ru.diasoft.micro.dofacade.dto.error.GenericErrorResponse;
 import ru.diasoft.micro.dofacade.dto.error.InputParamsValidationErrorReponse;
 import ru.diasoft.micro.dofacade.exception.RecognitionException;
@@ -35,7 +37,7 @@ public class PhotoController {
             @ApiResponse(
                     code = 200,
                     message = "Операция завершилась успешно",
-                    response = ComparePhotosRes.class
+                    response = PhotoCompareRes.class
             ),
             @ApiResponse(
                     code = 400,
@@ -49,7 +51,7 @@ public class PhotoController {
             )
     })
     @PostMapping("/compare")
-    public ResponseEntity<ComparePhotosRes> comparePhotos(@Valid @ModelAttribute ComparePhotosReq req) {
+    public ResponseEntity<PhotoCompareRes> comparePhotos(@Valid PhotoCompareReq req) {
 
         byte[] firstPhotoBytes;
         byte[] secondPhotoBytes;
@@ -67,9 +69,14 @@ public class PhotoController {
         }
 
         boolean comparisonResult = photoService.comparePhotos(firstPhotoBytes, secondPhotoBytes, req.getThreshold().doubleValue());
-        ComparePhotosRes response = new ComparePhotosRes();
-        response.setResult(comparisonResult);
+        PhotoCompareRes response = new PhotoCompareRes();
+        response.setMatch(comparisonResult);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/descriptors")
+    public ResponseEntity<PhotoDescriptorsRes> getDescriptors(@Valid PhotoDescriptorsReq req) {
+
     }
 }

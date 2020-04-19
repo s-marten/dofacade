@@ -1,13 +1,22 @@
 package ru.diasoft.micro.dofacade.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import ru.diasoft.micro.dofacade.model.Error;
 
-@Getter
-@AllArgsConstructor
 public class RecognitionException extends RuntimeException {
 
-    private Error error;
-    private int photoId;
+    private final Error error;
+    private final int photoId;
+
+    public RecognitionException(Error error, int photoId) {
+        this.error = error;
+        this.photoId = photoId;
+    }
+
+    public Error getError() {
+        return error;
+    }
+
+    public int getPhotoId() {
+        return photoId;
+    }
 }

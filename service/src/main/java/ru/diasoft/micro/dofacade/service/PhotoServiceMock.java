@@ -2,7 +2,8 @@ package ru.diasoft.micro.dofacade.service;
 
 import javax.annotation.PostConstruct;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,13 @@ import org.springframework.stereotype.Service;
         havingValue = "mock",
         matchIfMissing = true
 )
-@Slf4j
 public class PhotoServiceMock implements PhotoService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhotoServiceMock.class);
 
     @PostConstruct
     private void logAfterInit() {
-        log.info("Started Photo Mock Service");
+        LOGGER.info("Started Photo Mock Service");
     }
 
     @Override

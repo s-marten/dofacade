@@ -8,8 +8,9 @@ import java.nio.file.Path;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import ru.diasoft.micro.dofacade.domain.faceverifier.FaceVerifierJni;
@@ -21,17 +22,22 @@ import ru.diasoft.micro.dofacade.model.Error;
         name="photoService",
         havingValue = "ntechlab"
 )
-@AllArgsConstructor
-@Slf4j
 public class PhotoServiceImpl implements PhotoService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhotoServiceImpl.class);
 
     private static final String IMG_FORMAT = "png";
 
     private final FaceVerifierJni faceVerifierJni;
 
+    @Autowired
+    public PhotoServiceImpl(FaceVerifierJni faceVerifierJni) {
+        this.faceVerifierJni = faceVerifierJni;
+    }
+
     @PostConstruct
     private void logAfterInit() {
-        log.info("Started NTechLab Photo service");
+        LOGGER.info("Started NTechLab Photo service");
     }
 
     @Override
@@ -54,7 +60,7 @@ public class PhotoServiceImpl implements PhotoService {
             BufferedImage bufferedImage = ImageIO.read(is);
             ImageIO.write(bufferedImage, IMG_FORMAT, path.toFile());
         } catch (IOException e) {
-            log.error("Couldn't create temp file", e);
+            LOGGER.error("Couldn't create temp file", e);
             throw new GenericException(Error.INTERNAL);
         }
         return path;
@@ -64,7 +70,7 @@ public class PhotoServiceImpl implements PhotoService {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            log.warn("Couldn't delete temp file", e);
+            LOGGER.warn("Couldn't delete temp file", e);
         }
     }
 }

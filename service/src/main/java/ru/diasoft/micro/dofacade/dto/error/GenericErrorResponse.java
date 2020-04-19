@@ -3,10 +3,8 @@ package ru.diasoft.micro.dofacade.dto.error;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
 import ru.diasoft.micro.dofacade.model.Error;
 
-@Data
 public class GenericErrorResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
@@ -17,5 +15,29 @@ public class GenericErrorResponse {
     public GenericErrorResponse(Error error) {
         this.code = error.getCode();
         this.message = error.getText();
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

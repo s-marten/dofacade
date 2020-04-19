@@ -2,7 +2,8 @@ package ru.diasoft.micro.dofacade.domain.faceverifier;
 
 import javax.annotation.PostConstruct;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -11,15 +12,16 @@ import org.springframework.stereotype.Component;
         name="photoService",
         havingValue = "ntechlab"
 )
-@Slf4j
 public class FaceVerifierJni {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FaceVerifierJni.class);
 
     @PostConstruct
     private void init() {
         try {
             System.loadLibrary("FaceVerifierJni");
         } catch (UnsatisfiedLinkError e) {
-            log.error("Native code library failed to load.", e);
+            LOGGER.error("Native code library failed to load.", e);
             System.exit(1);
         }
     }
