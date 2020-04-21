@@ -46,10 +46,79 @@
 			<column name="age" type="INTEGER">
 				<constraints nullable="false" />
 			</column>
-            <column name="male" type="NUMERIC(2,1)">
+            <column name="gender_male" type="DOUBLE">
                 <constraints nullable="false" />
             </column>
-            <column name="female" type="NUMERIC(2,1)">
+            <column name="gender_female" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="race_asian" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="race_black" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="race_indian" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="race_white" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="emotion_angry" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="emotion_disgust" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="emotion_fear" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="emotion_happy" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="emotion_sad" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="emotion_surprise" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="emotion_neutral" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="liveness" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="quality" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="beard" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="no_glasses" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="optical_glasses" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="sun_glasses" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="head_pose_yaw" type="INTEGER">
+                <constraints nullable="false" />
+            </column>
+            <column name="head_pose_pitch" type="INTEGER">
+                <constraints nullable="false" />
+            </column>
+            <column name="head_pose_roll" type="INTEGER">
+                <constraints nullable="false" />
+            </column>
+            <column name="luminance_overexposure" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="luminance_underexposure" type="DOUBLE">
+                <constraints nullable="false" />
+            </column>
+            <column name="sharpness" type="DOUBLE">
                 <constraints nullable="false" />
             </column>
 		</createTable>

@@ -75,8 +75,27 @@ public class PhotoController {
         return ResponseEntity.ok(response);
     }
 
+    @ApiOperation(value = "Получение списка дескрипторов для сохраненных фотографий.", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "Операция завершилась успешно",
+                    response = PhotoDescriptorsRes.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Некорректные входящие параметры",
+                    response = InputParamsValidationErrorReponse.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Внутренняя ошибка сервиса",
+                    response = GenericErrorResponse.class
+            )
+    })
     @GetMapping("/descriptors")
     public ResponseEntity<PhotoDescriptorsRes> getDescriptors(@Valid PhotoDescriptorsReq req) {
-
+        PhotoDescriptorsRes res = new PhotoDescriptorsRes();
+        return ResponseEntity.ok(res);
     }
 }
