@@ -9,11 +9,11 @@
     </parent>
 
     <groupId>ru.diasoft.micro</groupId>
-    <artifactId>dofacade</artifactId>
+    <artifactId>DQBiometricsId</artifactId>
     <version>1.01.01-SNAPSHOT</version>    
     
     <packaging>pom</packaging>
-    <name>Parent for dofacade</name>
+    <name>Parent for DQBiometricsId</name>
     
     <url>http://www.diasoft.com</url>
 
@@ -32,6 +32,7 @@
         <dqapiexception.version>1.01.02-20032401</dqapiexception.version>
         <dqlayout.version>1.01.04-20031601</dqlayout.version>
         <log4j2.version>2.13.0</log4j2.version>
+        <innersource.version>0.0.2-SNAPSHOT</innersource.version>
     </properties>
 
     <modules>

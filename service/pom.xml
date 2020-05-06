@@ -4,11 +4,11 @@
 
     <parent>
         <groupId>ru.diasoft.micro</groupId>
-        <artifactId>dofacade</artifactId>
+        <artifactId>dqbiometricsidms</artifactId>
         <version>1.01.01-SNAPSHOT</version>
     </parent>
-    <artifactId>dofacadems</artifactId>
-    <name>Microservice for dofacade</name>
+    <artifactId>dqbiometricsidms</artifactId>
+    <name>Microservice for DQBiometricsId</name>
 
     <build>
         <plugins>
@@ -382,6 +382,12 @@
             <groupId>ru.diasoft.digitalq.libs</groupId>
             <artifactId>dqapiexception</artifactId>
             <version>${dqapiexception.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.diasoft.innersource</groupId>
+            <artifactId>mission-control-unit-starter</artifactId>
+            <version>${innersource.version}</version>
         </dependency>
         
         <!-- Dev tools -->

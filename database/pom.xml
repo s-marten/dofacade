@@ -4,11 +4,11 @@
 
 	<parent>
 		<groupId>ru.diasoft.micro</groupId>
-		<artifactId>dofacade</artifactId>
+		<artifactId>DQBiometricsId</artifactId>
 		<version>1.01.01-SNAPSHOT</version>
 	</parent>
-	<artifactId>dofacadedb</artifactId>
-	<name>Database for dofacade</name>
+	<artifactId>DQBiometricsIdDb</artifactId>
+	<name>Database for DQBiometricsId</name>
 
 	<properties>
 		<parentJAR>${project.build.directory}/parent</parentJAR>

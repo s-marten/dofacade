@@ -27,6 +27,17 @@ security:
         key-uri: ${AUTH_SERVER_URL}/uaa/oauth/token_key
         
 spring:
+  application:
+    mission-control-unit:
+      name: 'DQ  Идентификация по биометрическим данным'
+#        version: 'Версия юнита (необязательно)'
+        group-id: 'ИД группы (категории) юнитов Mission Control (необязательно)'
+        description: 'Краткое описание функционала юнита Mission Control'
+        icon: 'Иконка юнита Mission Control'
+          type: 'Тип иконки юнита'
+          pack: 'Наименование пака иконок'
+          name: 'Наименование иконки из пака. Обязательное, если unitIconType = pack'
+          body: 'Body иконки юнита. Обязательное, если unitIconType = body'
   datasource:
     driverClassName: ${DB_DRIVER}
     url: ${DB_URL}
