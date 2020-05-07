@@ -384,11 +384,12 @@
             <version>${dqapiexception.version}</version>
         </dependency>
 
-        <dependency>
+<!--        пока задеплоим без него -->
+        <!--<dependency>
             <groupId>ru.diasoft.innersource</groupId>
             <artifactId>mission-control-unit-starter</artifactId>
             <version>${innersource.version}</version>
-        </dependency>
+        </dependency>-->
         
         <!-- Dev tools -->
         <dependency>
